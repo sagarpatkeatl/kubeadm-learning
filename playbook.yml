@@ -1,0 +1,50 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role: geerlingguy.docker
+      vars:
+        docker_edition: ce
+        docker_version: 18.06.2~ce~3-0~debian
+        docker_package: "docker-{{ docker_edition }}={{docker_version}}"
+  tasks:
+    - name: Docker daemon configuration
+      file:
+        src: files/etc/docker/daemon.json
+        dest: /etc/docker/daemon.json
+      notify: Reload docker daemon
+
+    - name: Install Kubernetes APT key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+    - name: Add k8s repository
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        update_cache: yes
+    - name: Install Dependencies
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - kubeadm
+        - kubelet
+        - kubectl
+      notify:
+        - Disable Swap
+        - Remove swap from fstab
+  handlers:
+    - name: Reload docker daemon
+      systemd:
+        name: docker
+        daemon_reload: yes
+        state: restarted
+    - name: Disable Swap
+      shell: |
+        swapoff -a
+    - name: Remove swap from fstab
+      replace:
+        path: /etc/fstab
+        regexp: '^(.+?\sswap\s+sw\s+.*)$'
+        replace: '# \1'
