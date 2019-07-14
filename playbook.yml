@@ -1,6 +1,16 @@
 ---
 - hosts: all
   become: true
+  pre_tasks:
+    - name: Update hostname
+      hostname:
+        name: "{{ hostname }}"
+    - name: Update /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "127.0.0.1 localhost {{ hostname }}"
+        regexp: '^127\.0\.0\.1.*$'
+        state: present
   roles:
     - role: geerlingguy.docker
       vars:
@@ -9,10 +19,17 @@
         docker_package: "docker-{{ docker_edition }}={{docker_version}}"
   tasks:
     - name: Docker daemon configuration
-      file:
-        src: files/etc/docker/daemon.json
+      copy:
+        src: ./files/etc/docker/daemon.json
         dest: /etc/docker/daemon.json
       notify: Reload docker daemon
+    - name: Add vagrant user to docker group
+      user:
+        name: vagrant
+        groups:
+          - docker
+        append: yes
+        state: present
 
     - name: Install Kubernetes APT key
       apt_key:
