@@ -1,2 +1,6 @@
 roles/
 .vagrant/
+*.log
+certs/
+**/*.crt
+**/*.key
