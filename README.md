@@ -12,7 +12,7 @@ To work correctly, it depends on the following tools
 1. Virtualbox
 1. Ansible
 
-## Content
+## Files
 
 - `Vagrantfile` - This provides the VM definitions for three VMs with Host-Only networking
 - `playbook.yml` - Ansible playbook for configuring hostnames 
@@ -23,6 +23,7 @@ To work correctly, it depends on the following tools
 
 1. Ensure all prerequisites are met
 1. Clone this repository: `git clone https://github.com/sagarpatkeatl/kubeadm-learning`, and cd into it: `cd kubeadm-learning`
+1. Install ansible role depenencies: `ansible-galaxy install -r roles.yml -p roles`
 1. You may now start one or all three virtual machines
    - `vagrant up` starts and provisions all virtual machines. Creates following three virtual machines
     - `node1` - 192.168.100.11
@@ -38,4 +39,5 @@ To work correctly, it depends on the following tools
 
 ## Contribute
 
-Contribute by providing useful samples as pull requests on the master branch.
+1. Provide useful samples as pull requests
+1. Report bugs / improvements
