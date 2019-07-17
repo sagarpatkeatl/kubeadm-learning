@@ -10,6 +10,7 @@ To work correctly, it depends on the following tools
 
 1. Git
 1. Virtualbox
+1. Vagrant
 1. Ansible
 
 ## Files
